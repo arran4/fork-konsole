@@ -211,6 +211,11 @@
        <item>
         <widget class="QPlainTextEdit" name="warning"/>
        </item>
+       <item>
+        <widget class="KMessageWidget" name="warningMessage">
+         <property name="visible"><bool>false</bool></property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </widget>
@@ -284,6 +289,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KMessageWidget</class>
+   <extends>QFrame</extends>
+   <header>kmessagewidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
