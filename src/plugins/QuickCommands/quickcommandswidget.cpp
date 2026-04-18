@@ -29,6 +29,7 @@ struct QuickCommandsWidget::Private {
   FilterModel *filterModel = nullptr;
   Konsole::SessionController *controller = nullptr;
   bool hasShellCheck = false;
+  bool enableShellCheck = true;
   bool isSetup = false;
   QTimer shellCheckTimer;
 };
@@ -38,13 +39,14 @@ QuickCommandsWidget::QuickCommandsWidget(QWidget *parent)
       priv(std::make_unique<Private>()) {
   ui->setupUi(this);
 
-  QSettings s;
-  s.beginGroup(QStringLiteral("quickcommands"));
-  bool enableShellCheck =
-      s.value(QStringLiteral("enableShellCheck"), true).toBool();
+  QSettings settings;
+  settings.beginGroup(QStringLiteral("plugins"));
+  settings.beginGroup(QStringLiteral("quickcommands"));
+  priv->enableShellCheck =
+      settings.value(QStringLiteral("enableShellCheck"), true).toBool();
   priv->hasShellCheck =
       !QStandardPaths::findExecutable(QStringLiteral("shellcheck")).isEmpty();
-  if (enableShellCheck && !priv->hasShellCheck) {
+  if (priv->enableShellCheck && !priv->hasShellCheck) {
     ui->warning->setPlainText(
         QStringLiteral("Missing executable 'shellcheck', please install"));
   }
@@ -86,10 +88,6 @@ QuickCommandsWidget::QuickCommandsWidget(QWidget *parent)
           [this] { priv->shellCheckTimer.start(250); });
 
   viewMode();
-
-  QSettings settings;
-  settings.beginGroup(QStringLiteral("plugins"));
-  settings.beginGroup(QStringLiteral("quickcommands"));
 
   const QKeySequence def(Qt::CTRL | Qt::ALT | Qt::Key_G);
   const QString defText = def.toString();
@@ -195,6 +193,7 @@ void QuickCommandsWidget::invokeCommand(const QModelIndex &idx) {
     ui->warningMessage->setText(
         i18n("Please fix all the warnings before trying to run this script"));
     ui->warningMessage->animatedShow();
+    return;
   }
 
   if (!priv->controller) {
@@ -218,13 +217,9 @@ void QuickCommandsWidget::invokeCommand(const QModelIndex &idx) {
 void QuickCommandsWidget::runCommand() {
   if (!priv->hasShellCheck) {
     // check again
-    QSettings s;
-    s.beginGroup(QStringLiteral("quickcommands"));
-    bool enableShellCheck =
-        s.value(QStringLiteral("enableShellCheck"), true).toBool();
     priv->hasShellCheck =
         !QStandardPaths::findExecutable(QStringLiteral("shellcheck")).isEmpty();
-    if (priv->hasShellCheck) {
+    if (priv->enableShellCheck && priv->hasShellCheck) {
       ui->warning->clear();
     }
   }
@@ -323,11 +318,7 @@ void QuickCommandsWidget::createMenu(const QPoint &pos) {
 }
 
 void QuickCommandsWidget::runShellCheck() {
-  QSettings settings;
-  settings.beginGroup(QStringLiteral("quickcommands"));
-  bool enableShellCheck =
-      settings.value(QStringLiteral("enableShellCheck"), true).toBool();
-  if (!enableShellCheck || !priv->hasShellCheck) {
+  if (!priv->enableShellCheck || !priv->hasShellCheck) {
     return;
   }
 
