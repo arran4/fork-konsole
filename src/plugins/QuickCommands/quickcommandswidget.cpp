@@ -228,6 +228,7 @@ void QuickCommandsWidget::runCommand() {
     ui->warningMessage->setMessageType(KMessageWidget::Warning);
     ui->warningMessage->setText(i18n("There are some errors on the script."));
     ui->warningMessage->animatedShow();
+    return;
   }
 
   const QString command = ui->command->toPlainText();
