@@ -13,6 +13,8 @@ public:
     QString name;
     QString tooltip;
     QString command;
+    QString icon;
+    QString color;
 };
 
 Q_DECLARE_METATYPE(QuickCommandData)
