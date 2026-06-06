@@ -148,11 +148,8 @@ void QuickCommandsWidget::indexSelected(const QModelIndex &idx)
         ui->command->setPlainText(data.command);
         ui->group->setCurrentText(item->parent()->text());
         ui->iconButton->setIcon(data.icon);
-        if (data.color.isEmpty() || !QColor(data.color).isValid()) {
-            ui->colorButton->setColor(QColor());
-        } else {
-            ui->colorButton->setColor(QColor(data.color));
-        }
+        QColor color(data.color);
+        ui->colorButton->setColor(color.isValid() ? color : QColor());
 
         runShellCheck();
     }

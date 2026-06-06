@@ -106,9 +106,11 @@ void QuickCommandsPlugin::activeViewChanged(Konsole::SessionController *controll
                 QModelIndex idx = priv->model.index(e, 0, folder);
                 QAction *act = new QAction(idx.data().toString());
                 const auto item = priv->model.itemFromIndex(idx);
-                const auto data = item->data(QuickCommandsModel::QuickCommandRole).value<QuickCommandData>();
-                if (!data.icon.isEmpty()) {
-                    act->setIcon(QIcon::fromTheme(data.icon));
+                if (item) {
+                    const auto data = item->data(QuickCommandsModel::QuickCommandRole).value<QuickCommandData>();
+                    if (!data.icon.isEmpty()) {
+                        act->setIcon(QIcon::fromTheme(data.icon));
+                    }
                 }
                 connect(act, &QAction::triggered, this, [this, idx, controllerPtr] {
                     if (controllerPtr == nullptr) {

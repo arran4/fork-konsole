@@ -151,11 +151,8 @@ void QuickCommandsModel::updateItem(QStandardItem *item, const QuickCommandData 
     } else {
         item->setIcon(QIcon());
     }
-    if (!data.color.isEmpty() && QColor(data.color).isValid()) {
-        item->setForeground(QBrush(QColor(data.color)));
-    } else {
-        item->setForeground(QBrush());
-    }
+    QColor color(data.color);
+    item->setForeground(color.isValid() ? QBrush(color) : QBrush());
 
 }
 
