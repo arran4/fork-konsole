@@ -1,3 +1,4 @@
+#include <QIcon>
 // This file was part of the KDE libraries
 // SPDX-FileCopyrightText: 2022 Tao Guo <guotao945@gmail.com>
 // SPDX-License-Identifier: GPL-2.0-or-later
@@ -104,6 +105,13 @@ void QuickCommandsPlugin::activeViewChanged(Konsole::SessionController *controll
             for (int e = 0; e < priv->model.rowCount(folder); e++) {
                 QModelIndex idx = priv->model.index(e, 0, folder);
                 QAction *act = new QAction(idx.data().toString());
+                const auto item = priv->model.itemFromIndex(idx);
+                if (item) {
+                    const auto data = item->data(QuickCommandsModel::QuickCommandRole).value<QuickCommandData>();
+                    if (!data.icon.isEmpty()) {
+                        act->setIcon(QIcon::fromTheme(data.icon));
+                    }
+                }
                 connect(act, &QAction::triggered, this, [this, idx, controllerPtr] {
                     if (controllerPtr == nullptr) {
                         return;

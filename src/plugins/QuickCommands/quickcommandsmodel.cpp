@@ -1,3 +1,6 @@
+#include <QBrush>
+#include <QColor>
+#include <QIcon>
 // This file was part of the KDE libraries
 // SPDX-FileCopyrightText: 2022 Tao Guo <guotao945@gmail.com>
 // SPDX-License-Identifier: GPL-2.0-or-later
@@ -33,6 +36,8 @@ void QuickCommandsModel::load()
             data.name = element.readEntry("name");
             data.tooltip = element.readEntry("tooltip");
             data.command = element.readEntry("command");
+            data.icon = element.readEntry("icon");
+            data.color = element.readEntry("color");
             addChildItem(data, groupName);
         }
     }
@@ -56,6 +61,8 @@ void QuickCommandsModel::save()
             element.writeEntry("name", data.name);
             element.writeEntry("tooltip", data.tooltip);
             element.writeEntry("command", data.command);
+            element.writeEntry("icon", data.icon);
+            element.writeEntry("color", data.color);
         }
     }
 
@@ -138,6 +145,15 @@ void QuickCommandsModel::updateItem(QStandardItem *item, const QuickCommandData 
         item->setToolTip(data.command);
     else
         item->setToolTip(data.tooltip);
+
+    if (!data.icon.isEmpty()) {
+        item->setIcon(QIcon::fromTheme(data.icon));
+    } else {
+        item->setIcon(QIcon());
+    }
+    QColor color(data.color);
+    item->setForeground(color.isValid() ? QBrush(color) : QBrush());
+
 }
 
 #include "moc_quickcommandsmodel.cpp"

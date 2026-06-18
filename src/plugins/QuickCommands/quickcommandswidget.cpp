@@ -12,6 +12,9 @@
 #include "ui_qcwidget.h"
 #include <KLocalizedString>
 #include <KMessageBox>
+#include <KColorButton>
+#include <KIconButton>
+
 
 #include <QSettings>
 #include <QStandardPaths>
@@ -131,6 +134,8 @@ void QuickCommandsWidget::indexSelected(const QModelIndex &idx)
         ui->tooltip->setText({});
         ui->command->setPlainText({});
         ui->group->setCurrentText({});
+        ui->iconButton->setIcon(QString());
+        ui->colorButton->setColor({});
         return;
     }
 
@@ -142,6 +147,9 @@ void QuickCommandsWidget::indexSelected(const QModelIndex &idx)
         ui->tooltip->setText(data.tooltip);
         ui->command->setPlainText(data.command);
         ui->group->setCurrentText(item->parent()->text());
+        ui->iconButton->setIcon(data.icon);
+        QColor color(data.color);
+        ui->colorButton->setColor(color.isValid() ? color : QColor());
 
         runShellCheck();
     }
@@ -257,6 +265,12 @@ QuickCommandData QuickCommandsWidget::data() const
     data.name = ui->name->text().trimmed();
     data.tooltip = ui->tooltip->text();
     data.command = ui->command->toPlainText();
+    data.icon = ui->iconButton->icon();
+    if (ui->colorButton->color().isValid()) {
+        data.color = ui->colorButton->color().name();
+    } else {
+        data.color = QString();
+    }
     return data;
 }
 
